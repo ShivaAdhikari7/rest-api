@@ -143,4 +143,20 @@ const login = async (req, res, next) => {
   });
 };
 
-module.exports = { signup, login };
+const getAllUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.findAll({
+      attributes: { exclude: ["password"] },
+    });
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching users failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+  res.json({ users });
+};
+
+module.exports = { signup, login, getAllUsers };
