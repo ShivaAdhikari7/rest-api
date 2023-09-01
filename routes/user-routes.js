@@ -4,6 +4,6 @@ const router = express.Router();
 
 const { signup } = require("../controllers/user-controller");
 
-router.get("/", signup);
+router.get("/signup", signup);
 
 module.exports = router;
