@@ -1,11 +1,17 @@
+const fs = require("fs");
+const path = require("path");
+
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/user-routes");
+const HttpError = require("./utils/http-error");
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(bodyParser.json());
+
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/api/users", userRoutes);
 
