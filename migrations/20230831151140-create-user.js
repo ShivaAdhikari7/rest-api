@@ -11,12 +11,22 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
       },
       password: {
         type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          len: [6, undefined],
+        },
       },
       imgUrl: {
         type: Sequelize.STRING,
