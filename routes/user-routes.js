@@ -10,6 +10,7 @@ const {
   getAllUsers,
   deleteUser,
   updateUser,
+  getUser,
 } = require("../controllers/user-controller");
 
 router.post(
@@ -25,6 +26,7 @@ router.post(
 );
 router.post("/login", login);
 router.get("/", getAllUsers);
+router.get("/:userId", getUser);
 router.use(Auth);
 router.patch(
   "/",

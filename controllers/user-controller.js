@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../utils/http-error");
-const { User } = require("../models");
+const { User, Record } = require("../models");
 
 // SignUp Functionality:
 const signup = async (req, res, next) => {
@@ -152,6 +152,7 @@ const getAllUsers = async (req, res, next) => {
   try {
     users = await User.findAll({
       attributes: { exclude: ["password"] },
+      include: [Record],
     });
   } catch (err) {
     const error = new HttpError(
@@ -206,7 +207,16 @@ const deleteUser = async (req, res, next) => {
     const error = new HttpError("Could not delete the user", 500);
     throw next(error);
   }
+  console.log(user);
   const imagePath = user.imgUrl;
+
+  try {
+    await Record.destroy({ where: { userId: req.userData.userId } });
+  } catch (err) {
+    const error = new HttpError("Could not delete the user", 500);
+    throw next(error);
+  }
+
   try {
     await User.destroy({ where: { id: req.userData.userId } });
   } catch (err) {
