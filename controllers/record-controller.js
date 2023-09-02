@@ -100,21 +100,39 @@ const getRecordById = async (req, res, next) => {
 // Function to get the all records:
 
 const getAllRecords = async (req, res, next) => {
-  let records;
   try {
-    records = await Record.findAll();
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "limit"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    const whereClause = { ...queryObj };
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const offset = (page - 1) * limit;
+
+    const records = await Record.findAll({
+      where: whereClause,
+      limit: limit,
+      offset: offset,
+    });
+
+    if (records.length === 0) {
+      const error = new HttpError("No records found", 404);
+      return next(error);
+    }
+
+    const totalRecords = await Record.count({ where: whereClause });
+
+    res.status(200).json({ records, totalRecords });
   } catch (err) {
     const error = new HttpError(
-      "Fetching records failed please try again later.",
+      "Fetching records failed, please try again later.",
       500
     );
+
     return next(error);
   }
-  if (!records) {
-    const error = new HttpError("No records found", 404);
-    return next(error);
-  }
-  res.status(200).send({ records });
 };
 
 //Function to delete the record

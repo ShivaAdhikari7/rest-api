@@ -6,6 +6,7 @@ const app = express();
 const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/user-routes");
+
 const recordRoutes = require("./routes/record-routes");
 const HttpError = require("./utils/http-error");
 
