@@ -3,7 +3,10 @@ const { check } = require("express-validator");
 const router = express.Router();
 const Auth = require("../middleware/auth");
 
-const { createOrder } = require("../controllers/order-controller");
+const {
+  createOrder,
+  getOrderByUserId,
+} = require("../controllers/order-controller");
 
 router.use(Auth);
 router.post(
@@ -16,4 +19,5 @@ router.post(
   ],
   createOrder
 );
+router.get("/user/:userId", getOrderByUserId);
 module.exports = router;

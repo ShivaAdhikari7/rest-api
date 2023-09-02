@@ -47,4 +47,25 @@ const createOrder = async (req, res, next) => {
 
   res.status(201).json({ Order: createdOrder });
 };
-module.exports = { createOrder };
+
+const getOrderByUserId = async (req, res, next) => {
+  let userId = req.params.userId;
+
+  let user;
+  try {
+    user = await User.findByPk(userId, { include: [Order] });
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching user failed, please try again later",
+      500
+    );
+    return next(error);
+  }
+  if (!user) {
+    const error = new HttpError("No user found for this id", 404);
+    return next(error);
+  }
+  res.json({ user });
+};
+
+module.exports = { createOrder, getOrderByUserId };

@@ -159,20 +159,4 @@ const getAllUsers = async (req, res, next) => {
   res.json({ users });
 };
 
-const getUserById = async (req, res, next) => {
-  let userId = req.params.id;
-
-  let user;
-  try {
-    user = await User.findByPk(userId, { include: [Order] });
-  } catch (err) {
-    const error = new HttpError(
-      "Fetching user failed, please try again later",
-      500
-    );
-    return next(error);
-  }
-  res.json({ user });
-};
-
-module.exports = { signup, login, getAllUsers, getUserById };
+module.exports = { signup, login, getAllUsers };

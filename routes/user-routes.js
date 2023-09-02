@@ -8,7 +8,6 @@ const {
   signup,
   login,
   getAllUsers,
-  getUserById,
 } = require("../controllers/user-controller");
 
 router.post(
@@ -24,6 +23,5 @@ router.post(
 );
 router.post("/login", login);
 router.get("/", getAllUsers);
-router.get("/:id", getUserById);
 
 module.exports = router;
