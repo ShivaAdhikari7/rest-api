@@ -105,7 +105,40 @@ const getAllOrders = async (req, res, next) => {
   res.status(200).send({ orders });
 };
 
-const deleteOrder = async (req, res, next) => {};
+const deleteOrder = async (req, res, next) => {
+  const orderId = req.params.orderId;
+
+  if (!orderId) {
+    const error = new HttpError("Could not find Order for the given id", 404);
+    return next(error);
+  }
+  let order;
+  try {
+    order = await Order.findByPk(orderId);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not delete the Order for the given id, Please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  if (req.userData.userId !== order.userId) {
+    const error = new HttpError("You are not allowed to delete the order", 403);
+    return next(error);
+  }
+  let deletedPlace;
+  try {
+    deletedPlace = Order.destroy({ where: { id: orderId } });
+  } catch (err) {
+    const error = new HttpError(
+      "Could not delete the Order for the given id, Please try again.",
+      500
+    );
+    return next(error);
+  }
+  res.status(203).send({ deletedPlace });
+};
 const updateOrder = async (req, res, next) => {};
 module.exports = {
   createOrder,

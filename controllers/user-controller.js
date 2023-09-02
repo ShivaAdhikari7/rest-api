@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../utils/http-error");
-const { User, Order } = require("../models");
+const { User } = require("../models");
 
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
@@ -16,7 +16,7 @@ const signup = async (req, res, next) => {
 
   let user;
   try {
-    user = await await User.findOne({ where: { email } });
+    user = await User.findOne({ where: { email } });
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
@@ -158,8 +158,6 @@ const getAllUsers = async (req, res, next) => {
   }
   res.json({ users });
 };
-
-
 
 module.exports = {
   signup,

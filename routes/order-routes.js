@@ -35,5 +35,5 @@ router.patch(
   ],
   updateOrder
 );
-router.delete("/:OrderId", deleteOrder);
+router.delete("/:orderId", deleteOrder);
 module.exports = router;
