@@ -1,9 +1,11 @@
+const fs = require("fs");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../utils/http-error");
 const { User } = require("../models");
 
+// SignUp Functionality:
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -11,7 +13,6 @@ const signup = async (req, res, next) => {
       new HttpError("Input data are invalid, Please check your data", 422)
     );
   }
-
   const { name, email, password } = req.body;
 
   let user;
@@ -80,6 +81,7 @@ const signup = async (req, res, next) => {
     .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
+// Login Functionality
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -144,6 +146,7 @@ const login = async (req, res, next) => {
   });
 };
 
+// Function to fetch all the users from database:
 const getAllUsers = async (req, res, next) => {
   let users;
   try {
@@ -160,8 +163,64 @@ const getAllUsers = async (req, res, next) => {
   res.json({ users });
 };
 
-const updateUser = async (req, res, next) => {};
-const deleteUser = async (req, res, next) => {};
+// Function to update the user:
+const updateUser = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
+  }
+  const { name, email, password } = req.body;
+  let user;
+  try {
+    user = await User.findByPk(req.userData.userId);
+  } catch (err) {
+    const error = new HttpError("Could not delete the user", 500);
+    throw next(error);
+  }
+
+  user.name = name;
+  user.email = email;
+  user.phone = password;
+
+  try {
+    await user.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update user.",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ user });
+};
+// Function to delete the user:
+const deleteUser = async (req, res, next) => {
+  let user;
+  try {
+    user = await User.findByPk(req.userData.userId);
+  } catch (err) {
+    const error = new HttpError("Could not delete the user", 500);
+    throw next(error);
+  }
+  const imagePath = user.imgUrl;
+  try {
+    await User.destroy({ where: { id: req.userData.userId } });
+  } catch (err) {
+    const error = new HttpError("Could not delete the user", 500);
+    throw next(error);
+  }
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
+
+  res.status(204).send({});
+};
+
+// Function to get the data of single user:
 const getUser = async (req, res, next) => {
   let userId = req.params.userId;
 
@@ -169,7 +228,6 @@ const getUser = async (req, res, next) => {
   try {
     user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
-      include: [Record],
     });
   } catch (err) {
     const error = new HttpError(
@@ -189,4 +247,6 @@ module.exports = {
   login,
   getAllUsers,
   getUser,
+  deleteUser,
+  updateUser,
 };

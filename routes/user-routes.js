@@ -1,13 +1,15 @@
 const express = require("express");
 const { check } = require("express-validator");
 const fileUpload = require("../middleware/file-upload");
-
+const Auth = require("../middleware/auth");
 const router = express.Router();
 
 const {
   signup,
   login,
   getAllUsers,
+  deleteUser,
+  updateUser,
 } = require("../controllers/user-controller");
 
 router.post(
@@ -23,5 +25,16 @@ router.post(
 );
 router.post("/login", login);
 router.get("/", getAllUsers);
+router.use(Auth);
+router.patch(
+  "/",
+  [
+    check("name").not().isEmpty(),
+    check("phone").isLength({ min: 10 }),
+    check("email").normalizeEmail().isEmail(),
+  ],
+  updateUser
+);
+router.delete("/", deleteUser);
 
 module.exports = router;

@@ -1,9 +1,9 @@
-const fs = require("fs");
 const { validationResult } = require("express-validator");
 const HttpError = require("../utils/http-error");
 const { User, Record } = require("../models");
 
 //Function to Create new Record
+
 const createRecord = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -50,6 +50,8 @@ const createRecord = async (req, res, next) => {
   res.status(201).json({ Record: createdRecord });
 };
 
+// Function to get a record of all users:
+
 const getRecordByUserId = async (req, res, next) => {
   let userId = req.params.userId;
 
@@ -73,6 +75,8 @@ const getRecordByUserId = async (req, res, next) => {
   res.json({ user });
 };
 
+// Function to get a single record by its unique identifier:
+
 const getRecordById = async (req, res, next) => {
   const Id = req.params.recordId;
 
@@ -92,6 +96,9 @@ const getRecordById = async (req, res, next) => {
   }
   res.status(200).send({ record });
 };
+
+// Function to get the all records:
+
 const getAllRecords = async (req, res, next) => {
   let records;
   try {
@@ -109,6 +116,8 @@ const getAllRecords = async (req, res, next) => {
   }
   res.status(200).send({ records });
 };
+
+//Function to delete the record
 
 const deleteRecord = async (req, res, next) => {
   const recordId = req.params.recordId;
@@ -149,6 +158,9 @@ const deleteRecord = async (req, res, next) => {
 
   res.status(204).send({});
 };
+
+// Function to update the Record:
+
 const updateRecord = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -158,6 +170,7 @@ const updateRecord = async (req, res, next) => {
     );
   }
   const { name, email, phone } = req.body;
+
   const recordId = req.params.recordId;
 
   let record;
