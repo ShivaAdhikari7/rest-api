@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { validationResult } = require("express-validator");
 const HttpError = require("../utils/http-error");
 const { User, Order } = require("../models");
@@ -53,7 +54,10 @@ const getOrderByUserId = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findByPk(userId, { include: [Order] });
+    user = await User.findByPk(userId, {
+      attributes: { exclude: ["password"] },
+      include: [Order],
+    });
   } catch (err) {
     const error = new HttpError(
       "Fetching user failed, please try again later",
@@ -108,10 +112,6 @@ const getAllOrders = async (req, res, next) => {
 const deleteOrder = async (req, res, next) => {
   const orderId = req.params.orderId;
 
-  if (!orderId) {
-    const error = new HttpError("Could not find Order for the given id", 404);
-    return next(error);
-  }
   let order;
   try {
     order = await Order.findByPk(orderId);
@@ -123,13 +123,18 @@ const deleteOrder = async (req, res, next) => {
     return next(error);
   }
 
+  if (!order) {
+    const error = new HttpError("Could not find Order for the given id", 404);
+    return next(error);
+  }
+
   if (req.userData.userId !== order.userId) {
     const error = new HttpError("You are not allowed to delete the order", 403);
     return next(error);
   }
-  let deletedPlace;
+
   try {
-    deletedPlace = Order.destroy({ where: { id: orderId } });
+    Order.destroy({ where: { id: orderId } });
   } catch (err) {
     const error = new HttpError(
       "Could not delete the Order for the given id, Please try again.",
@@ -137,9 +142,60 @@ const deleteOrder = async (req, res, next) => {
     );
     return next(error);
   }
-  res.status(203).send({ deletedPlace });
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
+  res.status(204).send({});
 };
-const updateOrder = async (req, res, next) => {};
+const updateOrder = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
+  }
+  const { name, email, phone } = req.body;
+  const orderId = req.params.orderId;
+
+  let order;
+  try {
+    order = await Order.findByPk(orderId);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not update the Order for the given id, Please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!order) {
+    const error = new HttpError("Could not find Order for the given id", 404);
+    return next(error);
+  }
+  console.log(req.userData.userId, order.userId);
+  if (req.userData.userId !== order.userId) {
+    const error = new HttpError("You are not allowed to update the order", 403);
+    return next(error);
+  }
+
+  order.name = name;
+  order.email = email;
+  order.phone = phone;
+
+  try {
+    await order.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update order.",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ order });
+};
+
 module.exports = {
   createOrder,
   getOrderByUserId,
