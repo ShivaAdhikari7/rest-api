@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../utils/http-error");
-const { User } = require("../models");
+const { User, Order } = require("../models");
 
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
@@ -159,4 +159,20 @@ const getAllUsers = async (req, res, next) => {
   res.json({ users });
 };
 
-module.exports = { signup, login, getAllUsers };
+const getUserById = async (req, res, next) => {
+  let userId = req.params.id;
+
+  let user;
+  try {
+    user = await User.findByPk(userId, { include: [Order] });
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching user failed, please try again later",
+      500
+    );
+    return next(error);
+  }
+  res.json({ user });
+};
+
+module.exports = { signup, login, getAllUsers, getUserById };
