@@ -22,9 +22,9 @@ module.exports = {
         },
       },
       phone: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
-        allowNull: false,
+
         validate: {
           len: [10, undefined],
         },

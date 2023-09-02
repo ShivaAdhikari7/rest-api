@@ -68,4 +68,24 @@ const getOrderByUserId = async (req, res, next) => {
   res.json({ user });
 };
 
-module.exports = { createOrder, getOrderByUserId };
+const getOrderById = async (req, res, next) => {
+  const Id = req.params.orderId;
+
+  let order;
+  try {
+    order = await Order.findByPk(Id);
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching order failed, please try again later",
+      500
+    );
+    return next(error);
+  }
+  if (!order) {
+    const error = new HttpError("Could not found order for the given id", 404);
+    return next(error);
+  }
+  res.status(200).send({ order });
+};
+
+module.exports = { createOrder, getOrderByUserId, getOrderById };
