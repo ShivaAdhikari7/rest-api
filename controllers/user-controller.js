@@ -159,4 +159,10 @@ const getAllUsers = async (req, res, next) => {
   res.json({ users });
 };
 
-module.exports = { signup, login, getAllUsers };
+
+
+module.exports = {
+  signup,
+  login,
+  getAllUsers,
+};

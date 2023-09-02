@@ -7,8 +7,12 @@ const {
   createOrder,
   getOrderByUserId,
   getOrderById,
+  getAllOrders,
+  deleteOrder,
+  updateOrder,
 } = require("../controllers/order-controller");
 
+router.get("/", getAllOrders);
 router.use(Auth);
 router.post(
   "/",
@@ -22,4 +26,14 @@ router.post(
 );
 router.get("/user/:userId", getOrderByUserId);
 router.get("/:orderId", getOrderById);
+router.patch(
+  "/:orderId",
+  [
+    check("name").not().isEmpty(),
+    check("phone").isLength({ min: 10 }),
+    check("email").normalizeEmail().isEmail(),
+  ],
+  updateOrder
+);
+router.delete("/:OrderId", deleteOrder);
 module.exports = router;

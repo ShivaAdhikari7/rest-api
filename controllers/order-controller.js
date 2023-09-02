@@ -87,5 +87,31 @@ const getOrderById = async (req, res, next) => {
   }
   res.status(200).send({ order });
 };
+const getAllOrders = async (req, res, next) => {
+  let orders;
+  try {
+    orders = await Order.findAll();
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching orders failed please try again later.",
+      500
+    );
+    return next(error);
+  }
+  if (!orders) {
+    const error = new HttpError("No orders found", 404);
+    return next(error);
+  }
+  res.status(200).send({ orders });
+};
 
-module.exports = { createOrder, getOrderByUserId, getOrderById };
+const deleteOrder = async (req, res, next) => {};
+const updateOrder = async (req, res, next) => {};
+module.exports = {
+  createOrder,
+  getOrderByUserId,
+  getOrderById,
+  getAllOrders,
+  deleteOrder,
+  updateOrder,
+};
