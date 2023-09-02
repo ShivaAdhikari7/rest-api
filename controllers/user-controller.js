@@ -148,21 +148,58 @@ const login = async (req, res, next) => {
 
 // Function to fetch all the users from database:
 const getAllUsers = async (req, res, next) => {
-  let users;
   try {
-    users = await User.findAll({
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "limit"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    const whereClause = { ...queryObj };
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const offset = (page - 1) * limit;
+
+    const users = await User.findAll({
+      where: whereClause,
+      limit: limit,
+      offset: offset,
       attributes: { exclude: ["password"] },
       include: [Record],
     });
+
+    if (users.length === 0) {
+      const error = new HttpError("No records found", 404);
+      return next(error);
+    }
+
+    const totalRecords = await User.count({ where: whereClause });
+
+    res.status(200).json({ users, totalRecords });
   } catch (err) {
     const error = new HttpError(
-      "Fetching users failed, please try again later.",
+      "Fetching records failed, please try again later.",
       500
     );
+
     return next(error);
   }
-  res.json({ users });
 };
+
+// let users;
+// try {
+//   users = await User.findAll({
+//     attributes: { exclude: ["password"] },
+//     include: [Record],
+//   });
+// } catch (err) {
+//   const error = new HttpError(
+//     "Fetching users failed, please try again later.",
+//     500
+//   );
+//   return next(error);
+// }
+// res.json({ users });
+// };
 
 // Function to update the user:
 const updateUser = async (req, res, next) => {
