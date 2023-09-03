@@ -72,7 +72,7 @@ const getRecordByUserId = async (req, res, next) => {
     const error = new HttpError("No user found for this id", 404);
     return next(error);
   }
-  res.json({ user });
+  res.status(200).json({ user });
 };
 
 // Function to get a single record by its unique identifier:

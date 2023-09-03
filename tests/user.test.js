@@ -1,28 +1,10 @@
 const request = require("supertest");
-const jwt = require("jsonwebtoken");
-const app = require("../app");
 
+const app = require("../app");
 const { User } = require("../models");
 
-const userOneId = 10;
-const userOne = {
-  id: userOneId,
-  name: "Shiva Adhikari",
-  email: "imshiv97@gmail.com",
-  imgUrl: null,
-  password: "Shiva110#",
-  tokens: [
-    {
-      token: jwt.sign({ id: userOneId }, "MY_SECRET_CODE"),
-    },
-  ],
-};
-
-beforeEach(async () => {
-  await User.destroy({ where: {} });
-  const user = new User(userOne);
-  await user.save();
-});
+const { userOne, userOneId, setupDatabase } = require("./fixtures/db");
+beforeEach(setupDatabase);
 
 test("Should signup a new user", async () => {
   await request(app)
@@ -61,7 +43,7 @@ test("Should delete account of the user", async () => {
     .delete("/api/users/")
     .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
     .send()
-    .expect(403);
+    .expect(204);
 });
 
 test("Should not delete account for unauthenticated user", async () => {
@@ -77,5 +59,5 @@ test("Should update valid user fields", async () => {
       email: "bishnu@gmail.com",
       password: "Sasto2345#",
     })
-    .expect(403);
+    .expect(200);
 });
