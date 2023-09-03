@@ -76,9 +76,11 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(201)
-    .json({ userId: createdUser.id, email: createdUser.email, token: token });
+  res.status(201).json({
+    userId: createdUser.id,
+    email: createdUser.email,
+    token: token,
+  });
 };
 
 // Login Functionality
@@ -139,7 +141,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({
+  res.status(200).json({
     userId: existingUser.id,
     email: existingUser.email,
     token: token,
@@ -184,22 +186,6 @@ const getAllUsers = async (req, res, next) => {
     return next(error);
   }
 };
-
-// let users;
-// try {
-//   users = await User.findAll({
-//     attributes: { exclude: ["password"] },
-//     include: [Record],
-//   });
-// } catch (err) {
-//   const error = new HttpError(
-//     "Fetching users failed, please try again later.",
-//     500
-//   );
-//   return next(error);
-// }
-// res.json({ users });
-// };
 
 // Function to update the user:
 const updateUser = async (req, res, next) => {
