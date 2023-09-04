@@ -8,7 +8,7 @@ RestAPI provides API endpoint to signup, login searching, pagination, CRUD funct
 
 2. Install all the dependencies `npm install` or `npm i`.
 
-3. Make the folder uploads in root directory and inside uploads folder make images folder where the uploaded images will be stored.
+3. Make the folder named `uploads/images` in root directory where the uploaded images will be stored.
 
 4. Run the project `npm run server`.
 
@@ -16,7 +16,11 @@ RestAPI provides API endpoint to signup, login searching, pagination, CRUD funct
 
 After these steps, the localhost server on port 90 will start - [localhost](http://localhost:90).
 
-## API endpoints to:
+## Postman API documentation link :
+
+https://documenter.getpostman.com/view/24315428/2s9Y5eLdoq
+
+## API endpoints for:
 
 ## User:
 
