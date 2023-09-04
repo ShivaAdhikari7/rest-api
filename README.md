@@ -1,6 +1,6 @@
 # RestAPI
 
-RestAPI provides API endpoint to signup, login searching, pagination, CRUD functionality for both Records and the User. The API endpoint is made using Node.js, Express.js and to store the data MySQL server is used.
+RestAPI provides API endpoint to signup, login searching, pagination, CRUD functionality for both Records and the User. The API endpoint is made using Node.js, Express.js and to store the data MySQL database is used.
 
 ## How to install
 
