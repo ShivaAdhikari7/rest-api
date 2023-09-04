@@ -10,9 +10,11 @@ RestAPI provides API endpoint to signup, login searching, pagination, CRUD funct
 
 3. Make the folder named `uploads/images` in root directory where the uploaded images will be stored.
 
-4. Run the project `npm run server`.
+4. Open the `XAMPP` control panel then start`Apache and MySQL` server.
 
-5. To run the test file `npm run test`.
+5. Run the project `npm run server`.
+
+6. To run the test file `npm run test`.
 
 After these steps, the localhost server on port 90 will start - [localhost](http://localhost:90).
 
